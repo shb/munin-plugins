@@ -1,0 +1,28 @@
+#!/bin/env bash
+
+logdir=${logdir:=/var/log/httpd}
+
+case $1 in
+	config)
+		printf "graph_title Apache response statuses"
+		printf "graph_vlabel # of resp."
+		printf "graph_arg --base 1000 -l 0"
+		printf "graph_scale no"
+		printf "graph_category apache"
+		printf "graph_info Apache response status total count (according to active log files)"
+
+		printf "client_error.label 4xx"
+		printf "client_error.info Client errors"
+		printf "client_error.colour B35A00"
+
+		printf "server_error.label 5xx"
+		printf "server_error.info Server errors"
+		printf "server_error.colour B30000"
+	;;
+	*)
+		client_errors=$( grep \ 4..\  ${logdir}/*access_log | wc -l )
+		server_errors=$( grep \ 5..\  ${logdir}/*access_log | wc -l )
+		printf "client_error.value $client_errors"
+		printf "server_error.value $server_errors"
+	;;
+esac
